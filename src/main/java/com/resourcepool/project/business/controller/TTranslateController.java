@@ -156,7 +156,7 @@ public class TTranslateController extends BaseController
             TTranslateBook param = new TTranslateBook();
             param.setUserId(getUserId());
 //            param.setIsRecovery(0);
-            int num = tTranslateBookService.selectTTranslateBookList(param).size();
+            int num = tTranslateBookService.selectTTranslateBookListtoDay(param).size();
 
             if(num >= getLoginUser().getUser().getUseNumTrn()){
                 return AjaxResult.error("您已没有领取次数！");
@@ -195,7 +195,7 @@ public class TTranslateController extends BaseController
         TTranslateBook param = new TTranslateBook();
         param.setUserId(getUserId());
 //        param.setIsRecovery(0);
-        int num = tTranslateBookService.selectTTranslateBookList(param).size();
+        int num = tTranslateBookService.selectTTranslateBookListtoDay(param).size();
 
         if(num >= getLoginUser().getUser().getUseNumTrn()){
             return AjaxResult.error("您已没有领取次数！");

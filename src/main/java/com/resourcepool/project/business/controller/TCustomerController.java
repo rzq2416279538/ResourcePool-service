@@ -125,7 +125,7 @@ public class TCustomerController extends BaseController {
         TCustomerBook param = new TCustomerBook();
         param.setUserId(getUserId());
 //        param.setIsRecovery(0);
-        int num = tCustomerBookService.selectTCustomerBookList(param).size();
+        int num = tCustomerBookService.selectTCustomerBookListToDay(param).size();
 
         if(num >= getLoginUser().getUser().getUseNum()){
             return AjaxResult.error("您已没有领取次数！");
@@ -165,7 +165,7 @@ public class TCustomerController extends BaseController {
             TCustomerBook param = new TCustomerBook();
             param.setUserId(getUserId());
 //            param.setIsRecovery(0);
-            int num = tCustomerBookService.selectTCustomerBookList(param).size();
+            int num = tCustomerBookService.selectTCustomerBookListToDay(param).size();
 
             if(num >= getLoginUser().getUser().getUseNum()){
                 return AjaxResult.error("您已没有领取次数！");

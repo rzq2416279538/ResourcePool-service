@@ -44,6 +44,27 @@ public class TCustomerBookServiceImpl implements ITCustomerBookService
     {
         return tCustomerBookMapper.selectTCustomerBookList(tCustomerBook);
     }
+
+    /**
+     * 查询客户通讯录列表
+     * 查询每天
+     *
+     * @param tCustomerBook 客户通讯录
+     * @return 客户通讯录集合
+     */
+    @Override
+    public List<TCustomerBook> selectTCustomerBookListToDay(TCustomerBook tCustomerBook) {
+        return tCustomerBookMapper.selectTCustomerBookListToDay(tCustomerBook);
+    }
+
+
+    /**
+     * 查询客户通讯录列表
+     * 权限处理
+     *
+     * @param tCustomerBook 客户通讯录
+     * @return 客户通讯录集合
+     */
     @Override
     @DataScope(deptAlias = "d",userAlias = "t1")
     public List<TCustomerBook> selectTCustomerBookListAspect(TCustomerBook tCustomerBook)

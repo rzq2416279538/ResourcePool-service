@@ -66,6 +66,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by t1.create_time desc
     </select>
 
+    <select id="selectTCustomerBookListToDay" parameterType="TCustomerBook" resultMap="TCustomerBookResult">
+        <include refid="selectTCustomerBookVo"/>
+        <where>
+            to_days(t1.create_time) = to_days(now())
+            <if test="customerId != null "> and t1.customer_id = #{customerId}</if>
+            <if test="customerName != null  and customerName != ''"> and t1.customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="customerPhone != null  and customerPhone != ''"> and t1.customer_phone like concat('%', #{customerPhone}, '%')</if>
+            <if test="notes != null  and notes != ''"> and t1.notes like concat('%', #{notes}, '%')</if>
+            <if test="userId != null "> and t1.user_id = #{userId}</if>
+            <if test="isRecovery != null "> and t1.is_recovery = #{isRecovery}</if>
+            <if test="endTime != null "> and t1.end_time = #{endTime}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(t1.end_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(t1.end_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+        order by t1.create_time desc
+    </select>
+
     <select id="selectTCustomerBookListAspect" parameterType="TCustomerBook" resultMap="TCustomerBookResult">
         select
             t1.book_id,

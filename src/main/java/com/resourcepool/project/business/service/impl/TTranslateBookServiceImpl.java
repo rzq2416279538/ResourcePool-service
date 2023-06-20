@@ -45,6 +45,27 @@ public class TTranslateBookServiceImpl implements ITTranslateBookService
         return tTranslateBookMapper.selectTTranslateBookList(tTranslateBook);
     }
 
+    /**
+     * 查询企业通讯录列表
+     * 查询当日
+     *
+     * @param tTranslateBook 企业通讯录
+     * @return 企业通讯录集合
+     */
+    @Override
+    public List<TTranslateBook> selectTTranslateBookListtoDay(TTranslateBook tTranslateBook) {
+        return tTranslateBookMapper.selectTTranslateBookListtoDay(tTranslateBook);
+    }
+
+
+
+    /**
+     * 查询企业通讯录列表
+     * 权限配置
+     *
+     * @param tTranslateBook 企业通讯录
+     * @return 企业通讯录集合
+     */
     @Override
     @DataScope(deptAlias = "d",userAlias = "t1")
     public List<TTranslateBook> selectTTranslateBookListAspect(TTranslateBook tTranslateBook)

@@ -26,6 +26,25 @@ public interface TTranslateBookMapper
      * @return 企业通讯录集合
      */
     public List<TTranslateBook> selectTTranslateBookList(TTranslateBook tTranslateBook);
+
+
+    /**
+     * 查询企业通讯录列表
+     * 查询当日
+     *
+     * @param tTranslateBook 企业通讯录
+     * @return 企业通讯录集合
+     */
+    public List<TTranslateBook> selectTTranslateBookListtoDay(TTranslateBook tTranslateBook);
+
+
+    /**
+     * 查询企业通讯录列表
+     * 权限配置
+     *
+     * @param tTranslateBook 企业通讯录
+     * @return 企业通讯录集合
+     */
     public List<TTranslateBook> selectTTranslateBookListAspect(TTranslateBook tTranslateBook);
 
     /**

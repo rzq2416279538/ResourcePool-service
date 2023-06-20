@@ -26,6 +26,23 @@ public interface ITCustomerBookService
      * @return 客户通讯录集合
      */
     public List<TCustomerBook> selectTCustomerBookList(TCustomerBook tCustomerBook);
+
+    /**
+     * 查询客户通讯录列表
+     * 查询每天
+     *
+     * @param tCustomerBook 客户通讯录
+     * @return 客户通讯录集合
+     */
+    public List<TCustomerBook> selectTCustomerBookListToDay(TCustomerBook tCustomerBook);
+
+    /**
+     * 查询客户通讯录列表
+     * 权限处理
+     *
+     * @param tCustomerBook 客户通讯录
+     * @return 客户通讯录集合
+     */
     public List<TCustomerBook> selectTCustomerBookListAspect(TCustomerBook tCustomerBook);
 
     /**

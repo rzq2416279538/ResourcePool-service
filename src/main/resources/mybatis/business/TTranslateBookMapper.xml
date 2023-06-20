@@ -64,6 +64,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by t1.create_time desc
     </select>
 
+    <select id="selectTTranslateBookListtoDay" parameterType="TTranslateBook" resultMap="TTranslateBookResult">
+        <include refid="selectTTranslateBookVo"/>
+        <where>
+            to_days(t1.create_time) = to_days(now())
+            <if test="translateId != null "> and t1.translate_id = #{translateId}</if>
+            <if test="translateName != null  and translateName != ''"> and t1.translate_name like concat('%', #{translateName}, '%')</if>
+            <if test="notes != null  and notes != ''"> and t1.notes like concat('%', #{notes}, '%')</if>
+            <if test="contacts != null  and contacts != ''"> and t1.contacts = #{contacts}</if>
+            <if test="phone != null  and phone != ''"> and t1.phone = #{phone}</if>
+            <if test="addr != null  and addr != ''"> and t1.addr = #{addr}</if>
+            <if test="customerDemand != null  and customerDemand != ''"> and t1.customer_demand = #{customerDemand}</if>
+            <if test="sources != null  and sources != ''"> and t1.sources = #{sources}</if>
+            <if test="userId != null "> and t1.user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and t1.user_name like concat('%', #{userName}, '%')</if>
+            <if test="isRecovery != null "> and t1.is_recovery = #{isRecovery}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(t1.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(t1.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+        order by t1.create_time desc
+    </select>
+
     <select id="selectTTranslateBookListAspect" parameterType="TTranslateBook" resultMap="TTranslateBookResult">
             select
                 t1.translate_book_id,
