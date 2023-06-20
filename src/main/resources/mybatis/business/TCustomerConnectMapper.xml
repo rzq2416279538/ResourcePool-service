@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resourcepool.project.business.mapper.TCustomerConnectMapper">
+    
+    <resultMap type="TCustomerConnect" id="TCustomerConnectResult">
+        <result property="customerConnectId"    column="customer_connect_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="content"    column="content"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="customerName"    column="customer_name"    />
+    </resultMap>
+
+    <sql id="selectTCustomerConnectVo">
+        select customer_connect_id, user_id, user_name, customer_id, content, create_time,customer_name from t_customer_connect
+    </sql>
+
+    <select id="selectTCustomerConnectList" parameterType="TCustomerConnect" resultMap="TCustomerConnectResult">
+        <include refid="selectTCustomerConnectVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="customerId != null "> and customer_id = #{customerId}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+        </where>
+    </select>
+    
+    <select id="selectTCustomerConnectByCustomerConnectId" parameterType="Long" resultMap="TCustomerConnectResult">
+        <include refid="selectTCustomerConnectVo"/>
+        where customer_connect_id = #{customerConnectId}
+    </select>
+        
+    <insert id="insertTCustomerConnect" parameterType="TCustomerConnect" useGeneratedKeys="true" keyProperty="customerConnectId">
+        insert into t_customer_connect
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="customerId != null">customer_id,</if>
+            <if test="content != null">content,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="customerName != null">customer_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="customerId != null">#{customerId},</if>
+            <if test="content != null">#{content},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="customerName != null">#{customerName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTCustomerConnect" parameterType="TCustomerConnect">
+        update t_customer_connect
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="customerId != null">customer_id = #{customerId},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="customerName != null">customer_name = #{customerName},</if>
+        </trim>
+        where customer_connect_id = #{customerConnectId}
+    </update>
+
+    <delete id="deleteTCustomerConnectByCustomerConnectId" parameterType="Long">
+        delete from t_customer_connect where customer_connect_id = #{customerConnectId}
+    </delete>
+
+    <delete id="deleteTCustomerConnectByCustomerConnectIds" parameterType="String">
+        delete from t_customer_connect where customer_connect_id in 
+        <foreach item="customerConnectId" collection="array" open="(" separator="," close=")">
+            #{customerConnectId}
+        </foreach>
+    </delete>
+</mapper>

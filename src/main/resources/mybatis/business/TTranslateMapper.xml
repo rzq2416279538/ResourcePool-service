@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resourcepool.project.business.mapper.TTranslateMapper">
+    
+    <resultMap type="TTranslate" id="TTranslateResult">
+        <result property="translateId"    column="translate_id"    />
+        <result property="translateName"    column="translate_name"    />
+        <result property="contacts"    column="contacts"    />
+        <result property="phone"    column="phone"    />
+        <result property="addr"    column="addr"    />
+        <result property="customerDemand"    column="customer_demand"    />
+        <result property="sources"    column="sources"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="isUse"    column="is_use"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="notes"    column="notes"    />
+    </resultMap>
+
+    <sql id="selectTTranslateVo">
+        select translate_id, translate_name, contacts, phone, addr, customer_demand, sources, create_by, create_time, is_use, is_del,notes from t_translate
+    </sql>
+
+    <select id="selectTTranslateList" parameterType="TTranslate" resultMap="TTranslateResult">
+        <include refid="selectTTranslateVo"/>
+        <where>
+            is_del = 0 and is_use = 0
+            <if test="translateName != null  and translateName != ''"> and translate_name like concat('%', #{translateName}, '%')</if>
+            <if test="notes != null  and notes != ''"> and notes like concat('%', #{notes}, '%')</if>
+            <if test="contacts != null  and contacts != ''"> and contacts = #{contacts}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="addr != null  and addr != ''"> and addr = #{addr}</if>
+            <if test="customerDemand != null  and customerDemand != ''"> and customer_demand = #{customerDemand}</if>
+            <if test="sources != null  and sources != ''"> and sources = #{sources}</if>
+            <if test="isUse != null "> and is_use = #{isUse}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByName" parameterType="TTranslate" resultMap="TTranslateResult">
+        <include refid="selectTTranslateVo"/>
+        where translate_name = #{name} and phone = #{phone} and is_del = 0
+    </select>
+
+    <select id="selectTTranslateByTranslateId" parameterType="Long" resultMap="TTranslateResult">
+        <include refid="selectTTranslateVo"/>
+        where translate_id = #{translateId}
+    </select>
+        
+    <insert id="insertTTranslate" parameterType="TTranslate" useGeneratedKeys="true" keyProperty="translateId">
+        insert into t_translate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="translateName != null">translate_name,</if>
+            <if test="contacts != null">contacts,</if>
+            <if test="phone != null">phone,</if>
+            <if test="addr != null">addr,</if>
+            <if test="customerDemand != null">customer_demand,</if>
+            <if test="sources != null">sources,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="isUse != null">is_use,</if>
+            <if test="isDel != null">is_del,</if>
+            <if test="notes != null">notes,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="translateName != null">#{translateName},</if>
+            <if test="contacts != null">#{contacts},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="addr != null">#{addr},</if>
+            <if test="customerDemand != null">#{customerDemand},</if>
+            <if test="sources != null">#{sources},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="isUse != null">#{isUse},</if>
+            <if test="isDel != null">#{isDel},</if>
+            <if test="notes != null">#{notes},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTTranslate" parameterType="TTranslate">
+        update t_translate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="translateName != null">translate_name = #{translateName},</if>
+            <if test="contacts != null">contacts = #{contacts},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="addr != null">addr = #{addr},</if>
+            <if test="customerDemand != null">customer_demand = #{customerDemand},</if>
+            <if test="sources != null">sources = #{sources},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="isUse != null">is_use = #{isUse},</if>
+            <if test="isDel != null">is_del = #{isDel},</if>
+            <if test="notes != null">notes = #{notes},</if>
+        </trim>
+        where translate_id = #{translateId}
+    </update>
+
+    <delete id="deleteTTranslateByTranslateId" parameterType="Long">
+        update t_translate set is_del = 1
+        where translate_id = #{translateId}
+    </delete>
+
+    <delete id="deleteTTranslateByTranslateIds" parameterType="String">
+        update t_translate
+        set is_del = 1
+        where translate_id in
+        <foreach item="translateId" collection="array" open="(" separator="," close=")">
+            #{translateId}
+        </foreach>
+    </delete>
+</mapper>

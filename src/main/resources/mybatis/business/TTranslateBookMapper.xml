@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resourcepool.project.business.mapper.TTranslateBookMapper">
+    
+    <resultMap type="TTranslateBook" id="TTranslateBookResult">
+        <result property="translateBookId"    column="translate_book_id"    />
+        <result property="translateId"    column="translate_id"    />
+        <result property="translateName"    column="translate_name"    />
+        <result property="contacts"    column="contacts"    />
+        <result property="phone"    column="phone"    />
+        <result property="addr"    column="addr"    />
+        <result property="customerDemand"    column="customer_demand"    />
+        <result property="sources"    column="sources"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="isRecovery"    column="is_recovery"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="notes"    column="notes"    />
+        <result property="deptId"    column="dept_id"    />
+    </resultMap>
+
+    <sql id="selectTTranslateBookVo">
+        select
+            t1.translate_book_id,
+            t1.translate_id,
+            t1.translate_name,
+            t1.contacts,
+            t1.phone,
+            t1.addr,
+            t1.customer_demand,
+            t1.sources,
+            t1.user_id,
+            t1.user_name,
+            t1.is_recovery,
+            t1.create_time,
+            t1.notes,
+            t1.dept_id
+        from t_translate_book t1
+    </sql>
+
+    <select id="selectTTranslateBookList" parameterType="TTranslateBook" resultMap="TTranslateBookResult">
+        <include refid="selectTTranslateBookVo"/>
+        <where>  
+            <if test="translateId != null "> and t1.translate_id = #{translateId}</if>
+            <if test="translateName != null  and translateName != ''"> and t1.translate_name like concat('%', #{translateName}, '%')</if>
+            <if test="notes != null  and notes != ''"> and t1.notes like concat('%', #{notes}, '%')</if>
+            <if test="contacts != null  and contacts != ''"> and t1.contacts = #{contacts}</if>
+            <if test="phone != null  and phone != ''"> and t1.phone = #{phone}</if>
+            <if test="addr != null  and addr != ''"> and t1.addr = #{addr}</if>
+            <if test="customerDemand != null  and customerDemand != ''"> and t1.customer_demand = #{customerDemand}</if>
+            <if test="sources != null  and sources != ''"> and t1.sources = #{sources}</if>
+            <if test="userId != null "> and t1.user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and t1.user_name like concat('%', #{userName}, '%')</if>
+            <if test="isRecovery != null "> and t1.is_recovery = #{isRecovery}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(t1.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(t1.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+        order by t1.create_time desc
+    </select>
+
+    <select id="selectTTranslateBookListAspect" parameterType="TTranslateBook" resultMap="TTranslateBookResult">
+            select
+                t1.translate_book_id,
+                t1.translate_id,
+                t1.translate_name,
+                t1.contacts,
+                t1.phone,
+                t1.addr,
+                t1.customer_demand,
+                t1.sources,
+                t1.user_id,
+                t1.user_name,
+                t1.is_recovery,
+                t1.create_time,
+                t1.notes,
+                t1.dept_id,
+                (select count(*) FROM t_translate_connect where translate_id = t1.translate_id) as connectCount
+            from t_translate_book t1
+            left join sys_dept d on t1.dept_id = d.dept_id
+        <where>
+            <if test="translateId != null "> and t1.translate_id = #{translateId}</if>
+            <if test="translateName != null  and translateName != ''"> and t1.translate_name like concat('%', #{translateName}, '%')</if>
+            <if test="notes != null  and notes != ''"> and t1.notes like concat('%', #{notes}, '%')</if>
+            <if test="contacts != null  and contacts != ''"> and t1.contacts = #{contacts}</if>
+            <if test="phone != null  and phone != ''"> and t1.phone = #{phone}</if>
+            <if test="addr != null  and addr != ''"> and t1.addr = #{addr}</if>
+            <if test="customerDemand != null  and customerDemand != ''"> and t1.customer_demand = #{customerDemand}</if>
+            <if test="sources != null  and sources != ''"> and t1.sources = #{sources}</if>
+            <if test="userId != null "> and t1.user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and t1.user_name like concat('%', #{userName}, '%')</if>
+            <if test="isRecovery != null "> and t1.is_recovery = #{isRecovery}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(t1.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(t1.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+        </where>
+        order by t1.create_time desc
+    </select>
+    
+    <select id="selectTTranslateBookByTranslateBookId" parameterType="Long" resultMap="TTranslateBookResult">
+        <include refid="selectTTranslateBookVo"/>
+        where t1.translate_book_id = #{translateBookId}
+    </select>
+        
+    <insert id="insertTTranslateBook" parameterType="TTranslateBook" useGeneratedKeys="true" keyProperty="translateBookId">
+        insert into t_translate_book
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="translateId != null">translate_id,</if>
+            <if test="translateName != null">translate_name,</if>
+            <if test="contacts != null">contacts,</if>
+            <if test="phone != null">phone,</if>
+            <if test="addr != null">addr,</if>
+            <if test="customerDemand != null">customer_demand,</if>
+            <if test="sources != null">sources,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="isRecovery != null">is_recovery,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="notes != null">notes,</if>
+            <if test="deptId != null">dept_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="translateId != null">#{translateId},</if>
+            <if test="translateName != null">#{translateName},</if>
+            <if test="contacts != null">#{contacts},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="addr != null">#{addr},</if>
+            <if test="customerDemand != null">#{customerDemand},</if>
+            <if test="sources != null">#{sources},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="isRecovery != null">#{isRecovery},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="notes != null">#{notes},</if>
+            <if test="deptId != null">#{deptId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTTranslateBook" parameterType="TTranslateBook">
+        update t_translate_book
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="translateId != null">translate_id = #{translateId},</if>
+            <if test="translateName != null">translate_name = #{translateName},</if>
+            <if test="contacts != null">contacts = #{contacts},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="addr != null">addr = #{addr},</if>
+            <if test="customerDemand != null">customer_demand = #{customerDemand},</if>
+            <if test="sources != null">sources = #{sources},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="isRecovery != null">is_recovery = #{isRecovery},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="notes != null">notes = #{notes},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+        </trim>
+        where translate_book_id = #{translateBookId}
+    </update>
+
+    <delete id="deleteTTranslateBookByTranslateBookId" parameterType="Long">
+        delete from t_translate_book where translate_book_id = #{translateBookId}
+    </delete>
+
+    <delete id="deleteTTranslateBookByTranslateBookIds" parameterType="String">
+        delete from t_translate_book where translate_book_id in 
+        <foreach item="translateBookId" collection="array" open="(" separator="," close=")">
+            #{translateBookId}
+        </foreach>
+    </delete>
+</mapper>
