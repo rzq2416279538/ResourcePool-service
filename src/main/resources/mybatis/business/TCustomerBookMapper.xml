@@ -22,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="sources"    column="sources"    />
         <result property="notes"    column="notes"    />
         <result property="deptId"    column="dept_id"    />
+        <result property="connectContent"    column="connectContent"    />
     </resultMap>
 
     <sql id="selectTCustomerBookVo">
@@ -88,30 +89,63 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectTCustomerBookListAspect" parameterType="TCustomerBook" resultMap="TCustomerBookResult">
+--         select
+--             t1.book_id,
+--             t1.customer_id,
+--             t1.user_id,
+--             t1.customer_name,
+--             t1.create_time,
+--             t1.is_recovery,
+--             t1.end_time,
+--             t1.user_name,
+--             t1.customer_phone,
+--             t1.certificate_type,
+--             t1.certificate_speciality,
+--             t1.remark,
+--             t1.addr,
+--             t1.user_name,
+--             t1.sources,
+--             t1.notes,
+--             t1.dept_id,
+--             (select count(*) FROM t_customer_connect where customer_id = t1.customer_id) as connectCount
+--             from t_customer_book t1
+--         left join sys_dept d on t1.dept_id = d.dept_id
         select
-            t1.book_id,
-            t1.customer_id,
-            t1.user_id,
-            t1.customer_name,
-            t1.create_time,
-            t1.is_recovery,
-            t1.end_time,
-            t1.user_name,
-            t1.customer_phone,
-            t1.certificate_type,
-            t1.certificate_speciality,
-            t1.remark,
-            t1.addr,
-            t1.user_name,
-            t1.sources,
-            t1.notes,
-            t1.dept_id,
-            (select count(*) FROM t_customer_connect where customer_id = t1.customer_id) as connectCount
-            from t_customer_book t1
+        t1.book_id,
+        t1.customer_id,
+        t1.user_id,
+
+        t1.customer_name,
+        t1.create_time,
+        t1.is_recovery,
+        t1.end_time,
+        t1.user_name,
+        t1.customer_phone,
+        t1.certificate_type,
+        t1.certificate_speciality,
+        t1.remark,
+        t1.addr,
+        t1.user_name,
+        t1.sources,
+        t1.notes,
+        t1.dept_id,
+        (select count(*) FROM t_customer_connect where customer_id = t1.customer_id) as connectCount,
+        t2.content as connectContent
+        from t_customer_book t1
         left join sys_dept d on t1.dept_id = d.dept_id
+        LEFT JOIN (
+        SELECT customer_connect_id,customer_id, content
+        FROM t_customer_connect
+        WHERE (customer_id, create_time) IN (
+        SELECT customer_id, MAX(create_time)
+        FROM t_customer_connect
+        GROUP BY customer_id
+        )
+        ) t2 ON t1.customer_id = t2.customer_id
         <where>
             <if test="customerId != null "> and t1.customer_id = #{customerId}</if>
             <if test="customerName != null  and customerName != ''"> and t1.customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="connectContent != null  and connectContent != ''"> and t2.content like concat('%', #{connectContent}, '%')</if>
             <if test="customerPhone != null  and customerPhone != ''"> and t1.customer_phone like concat('%', #{customerPhone}, '%')</if>
             <if test="notes != null  and notes != ''"> and t1.notes like concat('%', #{notes}, '%')</if>
             <if test="userId != null "> and t1.user_id = #{userId}</if>
@@ -126,7 +160,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- 数据范围过滤 -->
             ${params.dataScope}
         </where>
-        order by t1.create_time desc
+        order by t1.book_id desc
     </select>
     
     <select id="selectTCustomerBookByBookId" parameterType="Long" resultMap="TCustomerBookResult">

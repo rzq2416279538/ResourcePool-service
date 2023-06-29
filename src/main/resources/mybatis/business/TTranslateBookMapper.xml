@@ -19,6 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="notes"    column="notes"    />
         <result property="deptId"    column="dept_id"    />
+        <result property="connectContent"    column="connectContent"    />
     </resultMap>
 
     <sql id="selectTTranslateBookVo">
@@ -90,24 +91,53 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectTTranslateBookListAspect" parameterType="TTranslateBook" resultMap="TTranslateBookResult">
-            select
-                t1.translate_book_id,
-                t1.translate_id,
-                t1.translate_name,
-                t1.contacts,
-                t1.phone,
-                t1.addr,
-                t1.customer_demand,
-                t1.sources,
-                t1.user_id,
-                t1.user_name,
-                t1.is_recovery,
-                t1.create_time,
-                t1.notes,
-                t1.dept_id,
-                (select count(*) FROM t_translate_connect where translate_id = t1.translate_id) as connectCount
-            from t_translate_book t1
-            left join sys_dept d on t1.dept_id = d.dept_id
+--             select
+--                 t1.translate_book_id,
+--                 t1.translate_id,
+--                 t1.translate_name,
+--                 t1.contacts,
+--                 t1.phone,
+--                 t1.addr,
+--                 t1.customer_demand,
+--                 t1.sources,
+--                 t1.user_id,
+--                 t1.user_name,
+--                 t1.is_recovery,
+--                 t1.create_time,
+--                 t1.notes,
+--                 t1.dept_id,
+--                 (select count(*) FROM t_translate_connect where translate_id = t1.translate_id) as connectCount
+--             from t_translate_book t1
+--             left join sys_dept d on t1.dept_id = d.dept_id
+
+                select
+                    t1.translate_book_id,
+                    t1.translate_id,
+                    t1.translate_name,
+                    t1.contacts,
+                    t1.phone,
+                    t1.addr,
+                    t1.customer_demand,
+                    t1.sources,
+                    t1.user_id,
+                    t1.user_name,
+                    t1.is_recovery,
+                    t1.create_time,
+                    t1.notes,
+                    t1.dept_id,
+                    (select count(*) FROM t_translate_connect where translate_id = t1.translate_id) as connectCount,
+                    t2.content as connectContent
+                from t_translate_book t1
+                    left join sys_dept d on t1.dept_id = d.dept_id
+                    LEFT JOIN (
+                        SELECT translate_connect_id,translate_id, content
+                        FROM t_translate_connect
+                        WHERE (translate_id, create_time) IN (
+                        SELECT translate_id, MAX(create_time)
+                        FROM t_translate_connect
+                        GROUP BY translate_id
+                    )
+                ) t2 ON t1.translate_id = t2.translate_id
         <where>
             <if test="translateId != null "> and t1.translate_id = #{translateId}</if>
             <if test="translateName != null  and translateName != ''"> and t1.translate_name like concat('%', #{translateName}, '%')</if>
@@ -126,10 +156,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
                 AND date_format(t1.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
             </if>
+            <if test="connectContent != null  and connectContent != ''"> and t2.content like concat('%', #{connectContent}, '%')</if>
             <!-- 数据范围过滤 -->
             ${params.dataScope}
         </where>
-        order by t1.create_time desc
+        order by t1.translate_book_id desc
     </select>
     
     <select id="selectTTranslateBookByTranslateBookId" parameterType="Long" resultMap="TTranslateBookResult">

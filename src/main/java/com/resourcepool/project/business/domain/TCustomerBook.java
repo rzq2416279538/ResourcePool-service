@@ -66,4 +66,6 @@ public class TCustomerBook extends BaseEntity
 
     private Long connectCount;
 
+    private String connectContent;
+
 }

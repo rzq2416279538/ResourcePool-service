@@ -70,4 +70,6 @@ public class TTranslateBook extends BaseEntity
 
     private Long connectCount;
 
+    private String connectContent;
+
 }

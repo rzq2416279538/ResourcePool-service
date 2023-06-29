@@ -6,6 +6,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.resourcepool.framework.aspectj.lang.annotation.Excel;
 import com.resourcepool.framework.web.domain.BaseEntity;
 
+import java.util.Date;
+
 /**
  * 客户沟通记录对象 t_customer_connect
  * 
@@ -37,5 +39,9 @@ public class TCustomerConnect extends BaseEntity
     private String content;
 
     private String customerName;
+
+    private Date endTime;
+
+    private Long bookId;
 
 }

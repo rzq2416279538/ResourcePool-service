@@ -3,6 +3,9 @@ package com.resourcepool.project.business.controller;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.resourcepool.project.business.domain.TCustomerBook;
+import com.resourcepool.project.business.service.ITCustomerBookService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +37,9 @@ public class TCustomerConnectController extends BaseController
 {
     @Autowired
     private ITCustomerConnectService tCustomerConnectService;
+
+    @Autowired
+    private ITCustomerBookService tCustomerBookService;
 
     /**
      * 查询客户沟通记录列表
@@ -74,6 +80,12 @@ public class TCustomerConnectController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody TCustomerConnect tCustomerConnect)
     {
+        if(tCustomerConnect.getEndTime() != null){
+            TCustomerBook book = new TCustomerBook();
+            book.setBookId(tCustomerConnect.getBookId());
+            book.setEndTime(tCustomerConnect.getEndTime());
+            tCustomerBookService.updateTCustomerBook(book);
+        }
         tCustomerConnect.setUserId(getUserId());
         tCustomerConnect.setUserName(getLoginUser().getUser().getNickName());
         tCustomerConnect.setCreateTime(new Date());
